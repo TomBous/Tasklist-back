@@ -1,14 +1,14 @@
-const { getAll, register, login } = require("../controllers/user.controller");
+const verifyToken = require('../middleware/cookie.validation')
 
-module.exports = () => {
-    const router = require("express").Router()
-    
-    // PUBLIC ROUTES
-    router.get('/', getAll)
-    router.post('/', register)
-    router.post('/login', login)
+module.exports = (express, controllers) => {
+  const router = express.Router();
 
-    // PRIVATE ROUTES
+  router
+    .route("/users")
+    .get(verifyToken, controllers.user.findAll)
+    .post(controllers.user.register);
 
-    return router
+  router.post('/login', controllers.user.login);
+
+  return router;
 };
